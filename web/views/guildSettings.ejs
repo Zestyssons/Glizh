@@ -1,0 +1,870 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= guild.name %> - Lanya Bot</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #5865F2;
+      --secondary: #DDA0DD;
+      --dark: #1a1a2e;
+      --darker: #16161f;
+      --light: #FFFFFF;
+      --blurple: #5865F2;
+      --card-bg: #25243d;
+      --sidebar-bg: #212136;
+      --accent: #8A2BE2;
+    }
+    
+    body {
+      background-color: var(--dark);
+      color: var(--light);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      overflow-x: hidden;
+    }
+    
+    .navbar {
+      background-color: rgba(22, 22, 31, 0.95);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
+      z-index: 1030;
+    }
+    
+    .sidebar {
+      background-color: var(--sidebar-bg);
+      min-height: calc(100vh - 56px);
+      box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+      border-right: 1px solid rgba(255, 255, 255, 0.05);
+      padding-top: 20px;
+      position: sticky;
+      top: 56px;
+      height: calc(100vh - 56px);
+      overflow-y: auto;
+    }
+    
+    .setting-card {
+      background-color: var(--card-bg);
+      border-radius: 16px;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      margin-bottom: 25px;
+    }
+    
+    .setting-card:hover {
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+      transform: translateY(-5px);
+      border-color: rgba(88, 101, 242, 0.2);
+    }
+    
+    .setting-card-header {
+      padding: 20px 25px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      display: flex;
+      align-items: center;
+    }
+    
+    .setting-card-header h5 {
+      margin-bottom: 0;
+      font-weight: 600;
+    }
+    
+    .setting-card-body {
+      padding: 25px;
+    }
+    
+    .nav-pills {
+      margin-bottom: 30px;
+    }
+    
+    .nav-pills .nav-link {
+      color: var(--light);
+      padding: 12px 20px;
+      margin-bottom: 8px;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      font-weight: 500;
+    }
+    
+    .nav-pills .nav-link i {
+      margin-right: 12px;
+      font-size: 1.1rem;
+    }
+    
+    .nav-pills .nav-link:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+      transform: translateX(5px);
+    }
+    
+    .nav-pills .nav-link.active {
+      background: linear-gradient(to right, var(--primary), var(--accent));
+      box-shadow: 0 5px 15px rgba(88, 101, 242, 0.3);
+      transform: translateX(5px);
+    }
+    
+    .user-info {
+      display: flex;
+      align-items: center;
+    }
+    
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 10px;
+      border: 2px solid var(--secondary);
+      transition: all 0.3s ease;
+    }
+    
+    .guild-profile {
+      display: flex;
+      align-items: center;
+      margin-bottom: 30px;
+      padding: 20px;
+      background: rgba(33, 33, 54, 0.5);
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .guild-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 20px;
+      margin-right: 20px;
+      border: 3px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+    }
+    
+    .tab-content {
+      min-height: 500px;
+    }
+    
+    .section-title {
+      margin-bottom: 30px;
+      position: relative;
+      display: inline-block;
+      font-weight: 600;
+    }
+    
+    .section-title::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -10px;
+      width: 40px;
+      height: 3px;
+      background: linear-gradient(to right, var(--primary), var(--accent));
+      border-radius: 2px;
+    }
+    
+    .form-control, .form-select {
+      background-color: rgba(33, 33, 54, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--light);
+      border-radius: 10px;
+      padding: 12px 15px;
+      transition: all 0.3s;
+    }
+    
+    .form-control:focus, .form-select:focus {
+      background-color: rgba(38, 38, 60, 0.7);
+      border-color: rgba(88, 101, 242, 0.5);
+      box-shadow: 0 0 0 3px rgba(88, 101, 242, 0.1);
+      color: var(--light);
+    }
+    
+    .form-text {
+      opacity: 0.7;
+      font-size: 0.85rem;
+      margin-top: 5px;
+    }
+    
+    .form-check-input {
+      width: 1.2em;
+      height: 1.2em;
+      margin-top: 0.15em;
+    }
+    
+    .form-switch .form-check-input {
+      width: 2.5em;
+      height: 1.4em;
+      border-radius: 2em;
+      background-color: rgba(255, 255, 255, 0.2);
+      border: none;
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba(255, 255, 255, 0.9)'/%3e%3c/svg%3e");
+    }
+    
+    .form-switch .form-check-input:checked {
+      background-color: var(--primary);
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e");
+    }
+    
+    .form-label {
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+    
+    .btn {
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-weight: 500;
+      transition: all 0.3s;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(to right, var(--primary), var(--accent));
+      border: none;
+      box-shadow: 0 5px 15px rgba(88, 101, 242, 0.3);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(88, 101, 242, 0.4);
+      background: linear-gradient(to right, var(--accent), var(--primary));
+    }
+    
+    .btn-danger {
+      background-color: rgba(244, 67, 54, 0.8);
+      border: none;
+    }
+    
+    .btn-danger:hover {
+      background-color: rgba(244, 67, 54, 1);
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(244, 67, 54, 0.3);
+    }
+    
+    .btn-secondary {
+      background-color: rgba(255, 255, 255, 0.1);
+      border: none;
+    }
+    
+    .btn-secondary:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-3px);
+    }
+    
+    .settings-container {
+      position: relative;
+      z-index: 1;
+    }
+    
+    .background-shapes {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+    }
+    
+    .bg-shape {
+      position: absolute;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(88, 101, 242, 0.1), rgba(138, 43, 226, 0.1));
+      filter: blur(70px);
+      opacity: 0.5;
+    }
+    
+    .shape1 {
+      width: 400px;
+      height: 400px;
+      top: -200px;
+      right: -200px;
+    }
+    
+    .shape2 {
+      width: 300px;
+      height: 300px;
+      bottom: -150px;
+      left: -150px;
+    }
+    
+    .setting-section {
+      margin-bottom: 35px;
+    }
+    
+    .setting-section h5 {
+      margin-bottom: 15px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .setting-section hr {
+      margin: 15px 0;
+      border-color: rgba(255, 255, 255, 0.1);
+      opacity: 0.2;
+    }
+    
+    .role-badge {
+      padding: 6px 12px;
+      border-radius: 12px;
+      background-color: rgba(88, 101, 242, 0.2);
+      margin-right: 5px;
+      margin-bottom: 5px;
+      display: inline-block;
+      transition: all 0.3s;
+    }
+    
+    .role-badge:hover {
+      background-color: rgba(88, 101, 242, 0.3);
+      transform: translateY(-2px);
+    }
+    
+    @media (max-width: 992px) {
+      .sidebar {
+        position: static;
+        height: auto;
+        min-height: auto;
+        margin-bottom: 30px;
+      }
+      
+      .tab-content {
+        min-height: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="background-shapes">
+    <div class="bg-shape shape1"></div>
+    <div class="bg-shape shape2"></div>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand d-flex align-items-center" href="/">
+        <img src="/img/logo.png" alt="Lanya Logo" height="35" class="me-2">
+        <span>Lanya Dashboard</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/dashboard">Mis Servidores</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="https://discord.gg/kAYpdenZ8b" target="_blank">Soporte</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
+              <img src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png" class="user-avatar" alt="<%= user.username %>">
+              <%= user.username %>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end">
+              <li><a class="dropdown-item" href="/logout">Cerrar Sesión</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container-fluid settings-container">
+    <div class="row">
+      <!-- Sidebar -->
+      <div class="col-lg-3 col-xl-2 sidebar">
+        <div class="guild-profile">
+          <% if(guild.icon) { %>
+            <img src="https://cdn.discordapp.com/icons/<%= guild.id %>/<%= guild.icon %>.png" alt="<%= guild.name %>" class="guild-icon">
+          <% } else { %>
+            <div class="guild-icon bg-secondary d-flex align-items-center justify-content-center">
+              <span class="h3 m-0"><%= guild.name.charAt(0) %></span>
+            </div>
+          <% } %>
+          <div>
+            <h5 class="mb-1"><%= guild.name %></h5>
+            <p class="mb-0 text-muted"><i class="fas fa-users me-1"></i> <%= guild.memberCount || "?" %> miembros</p>
+          </div>
+        </div>
+        
+        <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist">
+          <button class="nav-link active" id="v-pills-general-tab" data-bs-toggle="pill" data-bs-target="#v-pills-general" type="button" role="tab">
+            <i class="fas fa-cog"></i> General
+          </button>
+          <button class="nav-link" id="v-pills-welcome-tab" data-bs-toggle="pill" data-bs-target="#v-pills-welcome" type="button" role="tab">
+            <i class="fas fa-door-open"></i> Bienvenidas
+          </button>
+          <button class="nav-link" id="v-pills-levels-tab" data-bs-toggle="pill" data-bs-target="#v-pills-levels" type="button" role="tab">
+            <i class="fas fa-chart-line"></i> Sistema de Niveles
+          </button>
+          <button class="nav-link" id="v-pills-autoroles-tab" data-bs-toggle="pill" data-bs-target="#v-pills-autoroles" type="button" role="tab">
+            <i class="fas fa-user-tag"></i> Auto Roles
+          </button>
+          <button class="nav-link" id="v-pills-logs-tab" data-bs-toggle="pill" data-bs-target="#v-pills-logs" type="button" role="tab">
+            <i class="fas fa-clipboard-list"></i> Logs del Servidor
+          </button>
+        </div>
+      </div>
+      
+      <!-- Main Content -->
+      <main class="col-lg-9 col-xl-10 px-md-4 py-4">
+        <div class="tab-content" id="v-pills-tabContent">
+          <!-- General Settings -->
+          <div class="tab-pane fade show active" id="v-pills-general" role="tabpanel">
+            <h2 class="section-title">Configuración General</h2>
+            
+            <div class="row">
+              <div class="col-lg-6">
+                <div class="setting-card">
+                  <div class="setting-card-header">
+                    <h5><i class="fas fa-info-circle me-2"></i> Información del Servidor</h5>
+                  </div>
+                  <div class="setting-card-body">
+                    <div class="setting-section">
+                      <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">ID del Servidor:</div>
+                        <div class="col-md-8"><code><%= guild.id %></code></div>
+                      </div>
+                      <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Miembros:</div>
+                        <div class="col-md-8"><%= guild.memberCount || "Desconocido" %></div>
+                      </div>
+                      <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Creado:</div>
+                        <div class="col-md-8"><%= new Date(guild.createdTimestamp).toLocaleDateString() %></div>
+                      </div>
+                      <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Región:</div>
+                        <div class="col-md-8">Europa</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-lg-6">
+                <div class="setting-card">
+                  <div class="setting-card-header">
+                    <h5><i class="fas fa-cog me-2"></i> Preferencias</h5>
+                  </div>
+                  <div class="setting-card-body">
+                    <form>
+                      <div class="mb-3">
+                        <label class="form-label">Prefijo (para comandos de texto)</label>
+                        <input type="text" class="form-control" value="!" placeholder="Prefijo del bot">
+                        <div class="form-text">Este prefijo se usa para los comandos de texto, además de los comandos slash.</div>
+                      </div>
+                      <div class="mb-3">
+                        <label class="form-label">Idioma</label>
+                        <select class="form-select">
+                          <option value="es" selected>Español</option>
+                          <option value="en">English</option>
+                        </select>
+                      </div>
+                      <div class="form-check form-switch mb-4">
+                        <input class="form-check-input" type="checkbox" id="enabledSwitch" checked>
+                        <label class="form-check-label" for="enabledSwitch">Bot habilitado en el servidor</label>
+                      </div>
+                      <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i> Guardar Cambios
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Welcome Settings -->
+          <div class="tab-pane fade" id="v-pills-welcome" role="tabpanel">
+            <h2 class="section-title">Sistema de Bienvenida</h2>
+            
+            <div class="setting-card">
+              <div class="setting-card-header">
+                <h5><i class="fas fa-door-open me-2"></i> Configuración de Bienvenida</h5>
+              </div>
+              <div class="setting-card-body">
+                <div class="form-check form-switch mb-4">
+                  <input class="form-check-input" type="checkbox" id="welcomeEnabledSwitch">
+                  <label class="form-check-label" for="welcomeEnabledSwitch">Activar mensajes de bienvenida</label>
+                </div>
+                
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label class="form-label">Canal de Bienvenida</label>
+                      <select class="form-select">
+                        <option selected>Seleccionar canal</option>
+                        <!-- Canales del servidor -->
+                      </select>
+                    </div>
+                    
+                    <div class="form-check form-switch mb-3">
+                      <input class="form-check-input" type="checkbox" id="welcomeImageSwitch">
+                      <label class="form-check-label" for="welcomeImageSwitch">Activar imagen de bienvenida</label>
+                    </div>
+                    
+                    <div class="mb-3">
+                      <label class="form-label">Previsualización de Imágenes</label>
+                      <div class="rounded" style="width: 100%; max-width: 400px; height: 200px; background-color: #333; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; color: #aaa;">
+                        <span>Vista previa no disponible</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label class="form-label">Mensaje de Bienvenida</label>
+                      <textarea class="form-control" rows="4" placeholder="Usa {user} para mencionar al usuario, {server} para el nombre del servidor, {count} para el número de miembros"></textarea>
+                      <div class="form-text">Variables: {user}, {server}, {count}, {user.name}, {user.tag}, {joindate}, {accountage}, {membercount}, {serverage}</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                      <label class="form-label">Color del Embed (Hex)</label>
+                      <input type="text" class="form-control" placeholder="#5865F2" value="#5865F2">
+                    </div>
+                  </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary mt-3">
+                  <i class="fas fa-save me-2"></i> Guardar Cambios
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Levels Settings -->
+          <div class="tab-pane fade" id="v-pills-levels" role="tabpanel">
+            <h2 class="section-title">Sistema de Niveles</h2>
+            
+            <div class="setting-card">
+              <div class="setting-card-header">
+                <h5><i class="fas fa-chart-line me-2"></i> Configuración de Niveles</h5>
+              </div>
+              <div class="setting-card-body">
+                <div class="form-check form-switch mb-4">
+                  <input class="form-check-input" type="checkbox" id="levelsEnabledSwitch">
+                  <label class="form-check-label" for="levelsEnabledSwitch">Activar sistema de niveles</label>
+                </div>
+                
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label class="form-label">Canal de anuncios de nivel</label>
+                      <select class="form-select">
+                        <option selected>Seleccionar canal</option>
+                        <!-- Canales del servidor -->
+                      </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                      <label class="form-label">Multiplicador de XP</label>
+                      <input type="number" class="form-control" min="1" max="5" step="0.1" value="1">
+                      <div class="form-text">Un valor más alto hará que los usuarios suban de nivel más rápido.</div>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label class="form-label">Mensaje de subida de nivel</label>
+                      <textarea class="form-control" rows="3" placeholder="¡Felicidades {user}! Has alcanzado el nivel {level}."></textarea>
+                      <div class="form-text">Variables: {user}, {level}, {xp}</div>
+                    </div>
+                    
+                    <div class="form-check form-switch mb-3">
+                      <input class="form-check-input" type="checkbox" id="levelDMSwitch">
+                      <label class="form-check-label" for="levelDMSwitch">Enviar mensajes de nivel por DM</label>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="setting-section mt-4">
+                  <h5>Recompensas de Nivel</h5>
+                  <p class="text-muted mb-3">Asigna roles automáticamente cuando los usuarios alcancen ciertos niveles.</p>
+                  
+                  <div id="levelRewards" class="mb-3">
+                    <div class="row mb-2 align-items-center">
+                      <div class="col-md-3">
+                        <input type="number" class="form-control" placeholder="Nivel" min="1">
+                      </div>
+                      <div class="col-md-7">
+                        <select class="form-select">
+                          <option selected>Seleccionar rol</option>
+                          <!-- Roles del servidor -->
+                        </select>
+                      </div>
+                      <div class="col-md-2">
+                        <button class="btn btn-danger w-100"><i class="fas fa-trash"></i></button>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <button class="btn btn-secondary mb-4">
+                    <i class="fas fa-plus me-2"></i>Añadir recompensa
+                  </button>
+                  
+                  <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                    <button type="submit" class="btn btn-primary">
+                      <i class="fas fa-save me-2"></i> Guardar Cambios
+                    </button>
+                    <button type="button" class="btn btn-outline-danger">
+                      <i class="fas fa-trash me-2"></i> Reiniciar Niveles
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Auto Roles Settings -->
+          <div class="tab-pane fade" id="v-pills-autoroles" role="tabpanel">
+            <h2 class="section-title">Auto Roles</h2>
+            
+            <div class="row">
+              <div class="col-lg-6">
+                <div class="setting-card">
+                  <div class="setting-card-header">
+                    <h5><i class="fas fa-user-plus me-2"></i> Roles de Ingreso</h5>
+                  </div>
+                  <div class="setting-card-body">
+                    <p class="text-muted mb-3">Estos roles se asignarán automáticamente a los nuevos miembros.</p>
+                    
+                    <div class="mb-4">
+                      <select class="form-select mb-3" multiple size="4">
+                        <!-- Roles del servidor -->
+                      </select>
+                      <button class="btn btn-secondary">
+                        <i class="fas fa-plus me-2"></i>Añadir rol
+                      </button>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">
+                      <i class="fas fa-save me-2"></i> Guardar Cambios
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-lg-6">
+                <div class="setting-card">
+                  <div class="setting-card-header">
+                    <h5><i class="fas fa-th-list me-2"></i> Roles Actuales</h5>
+                  </div>
+                  <div class="setting-card-body">
+                    <p class="text-muted mb-3">Roles configurados actualmente en el servidor.</p>
+                    
+                    <div class="mb-3">
+                      <div class="d-flex flex-wrap mb-3">
+                        <span class="role-badge">@Administrador</span>
+                        <span class="role-badge">@Moderador</span>
+                        <span class="role-badge">@Miembro</span>
+                        <span class="role-badge">@Bot</span>
+                      </div>
+                      
+                      <p class="text-muted">
+                        <i class="fas fa-info-circle me-1"></i> Usa los comandos <code>/rolemenu</code> y <code>/buttonrole</code> para crear menús de roles.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="setting-card mt-4">
+              <div class="setting-card-header">
+                <h5><i class="fas fa-button me-2"></i> Roles por Botón</h5>
+              </div>
+              <div class="setting-card-body">
+                <p class="text-muted mb-3">Crea mensajes con botones para que los usuarios obtengan roles.</p>
+                
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label class="form-label">Canal para mensaje de roles</label>
+                      <select class="form-select">
+                        <option selected>Seleccionar canal</option>
+                        <!-- Canales del servidor -->
+                      </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                      <label class="form-label">Título del mensaje</label>
+                      <input type="text" class="form-control" placeholder="Roles disponibles">
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label class="form-label">Descripción</label>
+                      <textarea class="form-control" rows="3" placeholder="Haz clic en los botones para obtener roles."></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                      <label class="form-label">Color del Embed (Hex)</label>
+                      <input type="text" class="form-control" placeholder="#5865F2" value="#5865F2">
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="setting-section mt-3">
+                  <h6 class="mb-3">Botones de roles</h6>
+                  <div id="roleButtons">
+                    <div class="row mb-3 align-items-center">
+                      <div class="col-md-4">
+                        <select class="form-select">
+                          <option selected>Seleccionar rol</option>
+                          <!-- Roles del servidor -->
+                        </select>
+                      </div>
+                      <div class="col-md-3">
+                        <input type="text" class="form-control" placeholder="Etiqueta del botón">
+                      </div>
+                      <div class="col-md-3">
+                        <select class="form-select">
+                          <option value="PRIMARY">Azul</option>
+                          <option value="SUCCESS">Verde</option>
+                          <option value="DANGER">Rojo</option>
+                          <option value="SECONDARY">Gris</option>
+                        </select>
+                      </div>
+                      <div class="col-md-2">
+                        <button class="btn btn-danger w-100"><i class="fas fa-trash"></i></button>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <button class="btn btn-secondary mb-4">
+                    <i class="fas fa-plus me-2"></i>Añadir botón
+                  </button>
+                  
+                  <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-paper-plane me-2"></i> Guardar y Publicar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Logs Settings -->
+          <div class="tab-pane fade" id="v-pills-logs" role="tabpanel">
+            <h2 class="section-title">Logs del Servidor</h2>
+            
+            <div class="setting-card">
+              <div class="setting-card-header">
+                <h5><i class="fas fa-clipboard-list me-2"></i> Configuración de Logs</h5>
+              </div>
+              <div class="setting-card-body">
+                <div class="form-check form-switch mb-4">
+                  <input class="form-check-input" type="checkbox" id="logsEnabledSwitch">
+                  <label class="form-check-label" for="logsEnabledSwitch">Activar logs del servidor</label>
+                </div>
+                
+                <div class="mb-4">
+                  <label class="form-label">Canal de Logs</label>
+                  <select class="form-select">
+                    <option selected>Seleccionar canal</option>
+                    <!-- Canales del servidor -->
+                  </select>
+                  <div class="form-text">Se recomienda crear un canal privado específico para logs.</div>
+                </div>
+                
+                <div class="setting-section">
+                  <h5 class="mb-3">Categorías de Logs</h5>
+                  
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="card-bg p-3 rounded mb-3" style="background-color: rgba(33, 33, 54, 0.3);">
+                        <div class="form-check form-switch mb-2">
+                          <input class="form-check-input" type="checkbox" id="logMessagesSwitch">
+                          <label class="form-check-label" for="logMessagesSwitch">Mensajes</label>
+                        </div>
+                        <div class="ms-4 text-muted small">
+                          <div>- Mensajes eliminados</div>
+                          <div>- Mensajes editados</div>
+                          <div>- Mensajes masivos borrados</div>
+                        </div>
+                      </div>
+                    
+                      <div class="card-bg p-3 rounded mb-3" style="background-color: rgba(33, 33, 54, 0.3);">
+                        <div class="form-check form-switch mb-2">
+                          <input class="form-check-input" type="checkbox" id="logChannelsSwitch">
+                          <label class="form-check-label" for="logChannelsSwitch">Canales</label>
+                        </div>
+                        <div class="ms-4 text-muted small">
+                          <div>- Canales creados</div>
+                          <div>- Canales eliminados</div>
+                          <div>- Canales actualizados</div>
+                        </div>
+                      </div>
+                    
+                      <div class="card-bg p-3 rounded mb-3" style="background-color: rgba(33, 33, 54, 0.3);">
+                        <div class="form-check form-switch mb-2">
+                          <input class="form-check-input" type="checkbox" id="logMembersSwitch">
+                          <label class="form-check-label" for="logMembersSwitch">Miembros</label>
+                        </div>
+                        <div class="ms-4 text-muted small">
+                          <div>- Miembros que entran</div>
+                          <div>- Miembros que salen</div>
+                          <div>- Cambios de nickname</div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                      <div class="card-bg p-3 rounded mb-3" style="background-color: rgba(33, 33, 54, 0.3);">
+                        <div class="form-check form-switch mb-2">
+                          <input class="form-check-input" type="checkbox" id="logRolesSwitch">
+                          <label class="form-check-label" for="logRolesSwitch">Roles</label>
+                        </div>
+                        <div class="ms-4 text-muted small">
+                          <div>- Roles creados</div>
+                          <div>- Roles eliminados</div>
+                          <div>- Roles actualizados</div>
+                          <div>- Asignaciones de roles</div>
+                        </div>
+                      </div>
+                    
+                      <div class="card-bg p-3 rounded mb-3" style="background-color: rgba(33, 33, 54, 0.3);">
+                        <div class="form-check form-switch mb-2">
+                          <input class="form-check-input" type="checkbox" id="logModerationSwitch">
+                          <label class="form-check-label" for="logModerationSwitch">Moderación</label>
+                        </div>
+                        <div class="ms-4 text-muted small">
+                          <div>- Bans y unbans</div>
+                          <div>- Kicks</div>
+                          <div>- Timeouts</div>
+                          <div>- Advertencias</div>
+                        </div>
+                      </div>
+                    
+                      <div class="card-bg p-3 rounded mb-3" style="background-color: rgba(33, 33, 54, 0.3);">
+                        <div class="form-check form-switch mb-2">
+                          <input class="form-check-input" type="checkbox" id="logVoiceSwitch">
+                          <label class="form-check-label" for="logVoiceSwitch">Canales de voz</label>
+                        </div>
+                        <div class="ms-4 text-muted small">
+                          <div>- Miembros que entran/salen</div>
+                          <div>- Cambios de canal</div>
+                          <div>- Cambios de estado (mute/deaf)</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <button type="submit" class="btn btn-primary mt-4">
+                    <i class="fas fa-save me-2"></i> Guardar Cambios
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

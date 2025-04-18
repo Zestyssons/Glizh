@@ -1,0 +1,37 @@
+modules = ["nodejs-20"]
+run = "npm run start"
+
+[nix]
+channel = "stable-24_05"
+
+[deployment]
+run = ["sh", "-c", "npm run start"]
+
+[[ports]]
+localPort = 3000
+externalPort = 3000
+
+[[ports]]
+localPort = 10000
+externalPort = 80
+
+[workflows]
+runButton = "Ejecutar Glizh Bot"
+
+[[workflows.workflow]]
+name = "AA"
+mode = "sequential"
+author = 41650482
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run start"
+
+[[workflows.workflow]]
+name = "Ejecutar Glizh Bot"
+author = 41650482
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run start"
